@@ -1,13 +1,13 @@
-import React from 'react';
-import styled from 'styled-components/macro';
+import React from "react";
+import styled, { css } from "styled-components/macro";
 
-import { QUERIES, WEIGHTS } from '../../constants';
-import Logo from '../Logo';
-import Icon from '../Icon';
-import UnstyledButton from '../UnstyledButton';
-import SuperHeader from '../SuperHeader';
-import MobileMenu from '../MobileMenu';
-import VisuallyHidden from '../VisuallyHidden';
+import { QUERIES, WEIGHTS } from "../../constants";
+import Logo from "../Logo";
+import Icon from "../Icon";
+import UnstyledButton from "../UnstyledButton";
+import SuperHeader from "../SuperHeader";
+import MobileMenu from "../MobileMenu";
+import VisuallyHidden from "../VisuallyHidden";
 
 const Header = () => {
   const [showMobileMenu, setShowMobileMenu] = React.useState(false);
@@ -20,12 +20,24 @@ const Header = () => {
           <Logo />
         </LogoWrapper>
         <DesktopNav>
-          <NavLink href="/sale">Sale</NavLink>
-          <NavLink href="/new">New&nbsp;Releases</NavLink>
-          <NavLink href="/men">Men</NavLink>
-          <NavLink href="/women">Women</NavLink>
-          <NavLink href="/kids">Kids</NavLink>
-          <NavLink href="/collections">Collections</NavLink>
+          <NavLink href="/sale" data-hover="Sale">
+            Sale
+          </NavLink>
+          <NavLink href="/new" data-hover="New&nbsp;Releases">
+            New&nbsp;Releases
+          </NavLink>
+          <NavLink href="/men" data-hover="Men">
+            Men
+          </NavLink>
+          <NavLink href="/women" data-hover="Women">
+            Women
+          </NavLink>
+          <NavLink href="/kids" data-hover="Kids">
+            Kids
+          </NavLink>
+          <NavLink href="/collections" data-hover="Collections">
+            Collections
+          </NavLink>
         </DesktopNav>
         <MobileActions>
           <ShoppingBagButton>
@@ -114,15 +126,114 @@ const Filler = styled.div`
   }
 `;
 
-const NavLink = styled.a`
-  font-size: 1.125rem;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--color-gray-900);
-  font-weight: ${WEIGHTS.medium};
+const navLinkHalfBorderVariant = css`
+  position: relative;
+  overflow: hidden;
+  padding-left: 16px;
+  padding-right: 16px;
 
   &:first-of-type {
     color: var(--color-secondary);
+  }
+
+  &::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    border-bottom: solid 2px;
+    border-left: solid 2px;
+    transform: translateY(calc(-100% + 2px));
+    transition: transform 200ms;
+  }
+
+  &:hover::after {
+    transform: translateY(0px);
+  }
+`;
+
+function NavLink(props) {
+  return (
+    <SNavLink href={props.href}>
+      <span className="effect" aria-hidden="true">
+        {props.children}
+      </span>
+      <span className="main">{props.children}</span>
+    </SNavLink>
+  );
+}
+
+const SNavLink = styled.a`
+  font-size: 1.125rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: ${WEIGHTS.medium};
+  position: relative;
+  overflow: hidden;
+
+  .main,
+  .effect {
+    display: block;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .main {
+    background-color: white;
+    color: var(--color-gray-900);
+  }
+
+  .effect {
+    display: none;
+  }
+
+  &:hover,
+  &:focus-visible {
+    .main {
+      background-color: var(--color-gray-900);
+      color: white;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .main,
+    .effect {
+      transition: transform 200ms;
+      will-change: transform;
+    }
+
+    .main {
+      transform: translateX(0px);
+      background-color: white;
+      color: var(--color-gray-900);
+    }
+    .effect {
+      display: revert;
+      position: absolute;
+      inset: 0 0 0 0;
+      background-color: var(--color-gray-900);
+      color: white;
+      transform: translateX(-25%);
+      z-index: -1;
+    }
+
+    &:hover,
+    &:focus-visible {
+      outline: none;
+
+      .main {
+        transform: translateX(100%);
+        background-color: white;
+        color: var(--color-gray-900);
+      }
+      .effect {
+        transform: translateX(0%);
+        visibility: visible;
+      }
+    }
   }
 `;
 
